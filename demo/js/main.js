@@ -1,5 +1,9 @@
 jQuery(document).ready(function(){
+	$('header').sticker({
+		topSpace:0
+	});
+
 	$('h1').sticker({
-		topSpace:100
+		topSpace:0
 	});
 });
