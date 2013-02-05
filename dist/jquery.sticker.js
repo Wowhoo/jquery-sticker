@@ -1,13 +1,11 @@
-/*! Sticker - v0.2.0 - 2013-02-06
+/*! Sticker - v0.3.0 - 2013-02-06
 * https://github.com/amazingSurge/sticker
 * Copyright (c) 2013 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
     "use strict";
 
     var $window = $(window),
-        //$document = $(document),
         windowHeight = $window.height();
-        //documentHeight = $document.height();
 
     var Global = {
         count: 0,
@@ -23,6 +21,7 @@
                 if (instance.enabled) {
                     Global.types[instance.type].scroll(instance);
 
+                    // fire custom scroll callback
                     if ($.isFunction(instance.options.scroll)) {
                         instance.options.scroll.call(instance);
                     }
@@ -30,10 +29,13 @@
             });
         },
         resize: function() {
+            windowHeight = $window.height();
+
             $.each(Global.instances, function(i, instance) {
                 if (instance.enabled) {
                     Global.types[instance.type].resize(instance);
-
+                    Global.types[instance.type].scroll(instance);
+                    // fire custom resize callback
                     if ($.isFunction(instance.options.resize)) {
                         instance.options.resize.call(instance);
                     }
@@ -108,6 +110,9 @@
 
             this.enable();
 
+            // first fire
+            Global.types[this.type].scroll(this);
+
             Global.instances.push(this);
             Global.start();
         },
@@ -130,6 +135,7 @@
         },
         disable: function() {
             this.enabled = false;
+            Global.types[this.type].normalize(this);
             this.$wrapper.removeClass(this.classes.enabled);
         }
     };
@@ -165,6 +171,12 @@
         },
         resize: function(api) {
             api.$wrapper.css('height', api.$element.outerHeight());
+        },
+        normalize: function(api){
+            api.$element.css({
+                position: '',
+                top: ''
+            });
         }
     });
 
@@ -182,7 +194,7 @@
                 elementHeight = api.$element.outerHeight();
 
             var extra = scrollTop - (elementTop - windowHeight + elementHeight + api.options.bottomSpace);
-            if (extra > 0) {
+            if (extra < 0) {
                 api.$element.css({
                     position: 'fixed',
                     bottom: api.options.bottomSpace
@@ -196,6 +208,12 @@
         },
         resize: function(api) {
             api.$wrapper.css('height', api.$element.outerHeight());
+        },
+        normalize: function(api){
+            api.$element.css({
+                position: '',
+                bottom: ''
+            });
         }
     });
 

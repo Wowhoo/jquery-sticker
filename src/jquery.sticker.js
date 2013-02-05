@@ -2,9 +2,7 @@
     "use strict";
 
     var $window = $(window),
-        //$document = $(document),
         windowHeight = $window.height();
-        //documentHeight = $document.height();
 
     var Global = {
         count: 0,
@@ -20,6 +18,7 @@
                 if (instance.enabled) {
                     Global.types[instance.type].scroll(instance);
 
+                    // fire custom scroll callback
                     if ($.isFunction(instance.options.scroll)) {
                         instance.options.scroll.call(instance);
                     }
@@ -32,7 +31,8 @@
             $.each(Global.instances, function(i, instance) {
                 if (instance.enabled) {
                     Global.types[instance.type].resize(instance);
-
+                    Global.types[instance.type].scroll(instance);
+                    // fire custom resize callback
                     if ($.isFunction(instance.options.resize)) {
                         instance.options.resize.call(instance);
                     }
@@ -109,7 +109,7 @@
 
             // first fire
             Global.types[this.type].scroll(this);
-            
+
             Global.instances.push(this);
             Global.start();
         },
@@ -168,7 +168,6 @@
         },
         resize: function(api) {
             api.$wrapper.css('height', api.$element.outerHeight());
-            this.scroll(api);
         },
         normalize: function(api){
             api.$element.css({
