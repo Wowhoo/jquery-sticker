@@ -1,11 +1,13 @@
-/*! Sticker - v0.2.0 - 2013-02-03
+/*! Sticker - v0.2.0 - 2013-02-06
 * https://github.com/amazingSurge/sticker
 * Copyright (c) 2013 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
     "use strict";
 
-    var $window = $(window);
-        //$document = $(document);
+    var $window = $(window),
+        //$document = $(document),
+        windowHeight = $window.height();
+        //documentHeight = $document.height();
 
     var Global = {
         count: 0,
@@ -73,9 +75,6 @@
         this.classes.enabled = namespace + '-enabled';
 
         this.components = {};
-        
-        //var windowHeight = $window.height(),
-        //    documentHeight = $document.height();
 
         // Initialization
         this.init();
@@ -164,14 +163,13 @@
                 });
             }
         },
-        resize: function() {
-
+        resize: function(api) {
+            api.$wrapper.css('height', api.$element.outerHeight());
         }
     });
 
     Sticker.registerType('bottom', {
         defaults: {
-            topBoundary: 0,
             bottomSpace: 0
         },
         init: function(api) {
@@ -180,27 +178,24 @@
         scroll: function(api) {
             // in this case, the element should not have margin top and bottom value
             var scrollTop = $window.scrollTop(),
-                elementTop = api.$wrapper.offset().top;
+                elementTop = api.$wrapper.offset().top,
+                elementHeight = api.$element.outerHeight();
 
-            if (api.options.topSpace > elementTop) {
-                api.options.topSpace = elementTop;
-            }
-
-            var extra = elementTop - api.options.topSpace - scrollTop;
-            if (extra < 0) {
+            var extra = scrollTop - (elementTop - windowHeight + elementHeight + api.options.bottomSpace);
+            if (extra > 0) {
                 api.$element.css({
                     position: 'fixed',
-                    top: api.options.topSpace
+                    bottom: api.options.bottomSpace
                 });
             } else {
                 api.$element.css({
                     position: '',
-                    top: ''
+                    bottom: ''
                 });
             }
         },
-        resize: function() {
-
+        resize: function(api) {
+            api.$wrapper.css('height', api.$element.outerHeight());
         }
     });
 

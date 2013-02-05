@@ -1,8 +1,10 @@
 (function(window, document, $, undefined) {
     "use strict";
 
-    var $window = $(window);
-        //$document = $(document);
+    var $window = $(window),
+        //$document = $(document),
+        windowHeight = $window.height();
+        //documentHeight = $document.height();
 
     var Global = {
         count: 0,
@@ -25,6 +27,8 @@
             });
         },
         resize: function() {
+            windowHeight = $window.height();
+
             $.each(Global.instances, function(i, instance) {
                 if (instance.enabled) {
                     Global.types[instance.type].resize(instance);
@@ -70,9 +74,6 @@
         this.classes.enabled = namespace + '-enabled';
 
         this.components = {};
-        
-        //var windowHeight = $window.height(),
-        //    documentHeight = $document.height();
 
         // Initialization
         this.init();
@@ -106,6 +107,9 @@
 
             this.enable();
 
+            // first fire
+            Global.types[this.type].scroll(this);
+            
             Global.instances.push(this);
             Global.start();
         },
@@ -128,6 +132,7 @@
         },
         disable: function() {
             this.enabled = false;
+            Global.types[this.type].normalize(this);
             this.$wrapper.removeClass(this.classes.enabled);
         }
     };
@@ -161,14 +166,20 @@
                 });
             }
         },
-        resize: function() {
-
+        resize: function(api) {
+            api.$wrapper.css('height', api.$element.outerHeight());
+            this.scroll(api);
+        },
+        normalize: function(api){
+            api.$element.css({
+                position: '',
+                top: ''
+            });
         }
     });
 
     Sticker.registerType('bottom', {
         defaults: {
-            topBoundary: 0,
             bottomSpace: 0
         },
         init: function(api) {
@@ -177,27 +188,30 @@
         scroll: function(api) {
             // in this case, the element should not have margin top and bottom value
             var scrollTop = $window.scrollTop(),
-                elementTop = api.$wrapper.offset().top;
+                elementTop = api.$wrapper.offset().top,
+                elementHeight = api.$element.outerHeight();
 
-            if (api.options.topSpace > elementTop) {
-                api.options.topSpace = elementTop;
-            }
-
-            var extra = elementTop - api.options.topSpace - scrollTop;
+            var extra = scrollTop - (elementTop - windowHeight + elementHeight + api.options.bottomSpace);
             if (extra < 0) {
                 api.$element.css({
                     position: 'fixed',
-                    top: api.options.topSpace
+                    bottom: api.options.bottomSpace
                 });
             } else {
                 api.$element.css({
                     position: '',
-                    top: ''
+                    bottom: ''
                 });
             }
         },
-        resize: function() {
-
+        resize: function(api) {
+            api.$wrapper.css('height', api.$element.outerHeight());
+        },
+        normalize: function(api){
+            api.$element.css({
+                position: '',
+                bottom: ''
+            });
         }
     });
 

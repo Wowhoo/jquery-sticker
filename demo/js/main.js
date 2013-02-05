@@ -6,7 +6,9 @@ jQuery(document).ready(function(){
 	$('h1').sticker({
 		topSpace:0
 	});
+	
 	$('footer').sticker({
+		type: 'bottom',
 		bottomSpace:0
 	});
 });
