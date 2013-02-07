@@ -4,11 +4,15 @@ jQuery(document).ready(function(){
 	});
 
 	$('h1').sticker({
-		topSpace:0
+		topSpace:20
 	});
 
 	$('footer').sticker({
 		type: 'bottom',
-		bottomSpace:10
+		bottomSpace:0
+	});
+
+	$('.sidebar').sticker({
+		type: 'sidebar'
 	});
 });
