@@ -172,7 +172,7 @@
         resize: function(api) {
             api.$wrapper.css('height', api.$element.outerHeight());
         },
-        normalize: function(api){
+        normalize: function(api) {
             api.$element.css({
                 position: '',
                 top: ''
@@ -209,7 +209,7 @@
         resize: function(api) {
             api.$wrapper.css('height', api.$element.outerHeight());
         },
-        normalize: function(api){
+        normalize: function(api) {
             api.$element.css({
                 position: '',
                 bottom: ''
@@ -217,38 +217,49 @@
         }
     });
 
-    //'sidebar' needs a 'absolute' or 'relative' ancestor so it can keep layout when resize window
-    Sticker.registerType('sidebar',{
+    Sticker.registerType('sidebar', {
         defaults: {
-            topSpace: 0,     // how many pixels to pad the element from the top of the window
+            topSpace: 0, // how many pixels to pad the element from the top of the window
             container: null
         },
         init: function(api) {
-
-            //api.$wrapper.css('height', api.$element.outerHeight());
-            if(!api.options.container){
+            if (!api.options.container) {
                 api.$container = api.$wrapper.parent();
-            }else{
+            } else {
                 api.$container = $(api.options.container);
             }
+
+            api.containerHeight = api.$container.height();
+            api.containerTop = api.$container.offset().top;
         },
         scroll: function(api) {
             var scrollTop = $window.scrollTop(),
-                elementTop = api.$wrapper.offset().top;
+                elementTop = api.$wrapper.offset().top,
+                elementHeight = api.$element.outerHeight();
 
-                var extra = scrollTop - elementTop + api.options.topSpace;
-                if (extra > 0) {
+            var extra = scrollTop - elementTop + api.options.topSpace;
+
+            if (extra > 0) {
+                var constraint = api.containerHeight - elementHeight + api.containerTop - elementTop;
+
+                if (extra > constraint) {
                     api.$wrapper.css({
-                        paddingTop: extra
+                        paddingTop: constraint
                     });
                 } else {
                     api.$wrapper.css({
-                        paddingTop: ''
+                        paddingTop: extra
                     });
-                }        
+                }
+            } else {
+                api.$wrapper.css({
+                    paddingTop: ''
+                });
+            }
         },
-        resize: function(api) {
-            //api.$wrapper.css('height', api.$element.outerHeight());
+        resize: function() {
+            api.containerHeight = api.$container.height();
+            api.containerTop = api.$container.offset().top;
         },
         normalize: function(api) {
             api.$wrapper.css({
