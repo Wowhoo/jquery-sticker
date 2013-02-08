@@ -220,93 +220,39 @@
     //'sidebar' needs a 'absolute' or 'relative' ancestor so it can keep layout when resize window
     Sticker.registerType('sidebar',{
         defaults: {
-            topSpace: 30,     // how many pixels to pad the element from the top of the window (default = 10)
-            constrain: true  //if true stops sticky scrolling out of parent
+            topSpace: 0,     // how many pixels to pad the element from the top of the window
+            container: null
         },
         init: function(api) {
-            api.$wrapper.css('height', api.$element.outerHeight());
 
-            var $api = api.$element,
-                $parent = $api.parent(),
-                parentOffs = $parent.offset(),
-                currOff = $api.offset(),
-                data = $api.data('stickerData');               
-
-            if (!data) {
-                data = {
-                    offs: {}, //our parents offset
-                    orig: {   //store orginal css style
-                        top: $api.css('top'),
-                        left: $api.css('left'),
-                        position: $api.css('postion'),
-                        marginTop: $api.css('marginTop'),
-                        marginLeft: $api.css('marginLeft'),
-                        offset: $api.offset()
-                    }
-                }
-            }   
-
-            //go up the tree until we find an position elem 
-            while (parentOffs && "top" in parentOffs && $parent.css("position") === "static") {
-                $parent = $parent.parent();
-                parentOffs = $parent.offset(); 
+            //api.$wrapper.css('height', api.$element.outerHeight());
+            if(!api.options.container){
+                api.$container = api.$wrapper.parent();
+            }else{
+                api.$container = $(api.options.container);
             }
- 
-            if (parentOffs) { // found a postioned ancestor
-                var padingBottom = parseInt($parent.css("paddingBottom"));
-                padingBottom = isNaN(padingBottom) ? 0 : padingBottom;
-                data.offs = parentOffs;
-                data.offs.bottom = api.options.constrain ?  Math.abs(($parent.innerHeight() - padingBottom) - $api.outerHeight()) : $(document).height(); 
-            } else {
-                data.offs = {
-                    top: 0,
-                    left: 0,
-                    bottom: $(document).height()
-                };
-            }
-
-            //relace the original css style with 'absolute' style
-            //but never change elem's original postion on the page
-            $api.css({
-                position: "absolute",
-                top: Math.floor(currOff.top - data.offs.top) + "px",
-                left: Math.floor(currOff.left - data.offs.left) + "px",
-                margin: 0,
-                width: $api.width()
-            });
-
-            $api.data('stickerData',data);
         },
         scroll: function(api) {
-            var $api = api.$element,
-                data = $api.data('stickerData');
-                
-            if (data) {
-                var sTop = $window.scrollTop() - data.offs.top,
-                    currOffs = $api.offset(),
-                    origTop = data.orig.offset.top - data.offs.top,
-                    moveTo = origTop;
+            var scrollTop = $window.scrollTop(),
+                elementTop = api.$wrapper.offset().top;
 
-                if (origTop - api.options.topSpace < sTop) { 
-                    if ((sTop + api.options.topSpace) > data.offs.bottom) {
-                        moveTo = data.offs.bottom;
-                    } else {
-                        moveTo = sTop + api.options.topSpace;
-                    }
-                }
-
-                $api.css({
-                    top: moveTo
-                });
-            }           
+                var extra = scrollTop - elementTop + api.options.topSpace;
+                if (extra > 0) {
+                    api.$wrapper.css({
+                        paddingTop: extra
+                    });
+                } else {
+                    api.$wrapper.css({
+                        paddingTop: ''
+                    });
+                }        
         },
         resize: function(api) {
-            api.$wrapper.css('height', api.$element.outerHeight());
+            //api.$wrapper.css('height', api.$element.outerHeight());
         },
         normalize: function(api) {
-            api.$element.css({
-                position: '',
-                bottom: ''
+            api.$wrapper.css({
+                paddingTop: ''
             });
         }
     });

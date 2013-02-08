@@ -13,6 +13,7 @@ jQuery(document).ready(function(){
 	});
 
 	$('.sidebar').sticker({
-		type: 'sidebar'
+		type: 'sidebar',
+		topSpace: 30
 	});
 });
