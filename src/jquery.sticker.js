@@ -185,6 +185,7 @@
                 position: '',
                 top: ''
             });
+            api.$wrapper.css('height', '');
         }
     });
 
@@ -222,6 +223,7 @@
                 position: '',
                 bottom: ''
             });
+            api.$wrapper.css('height', '');
         }
     });
 
