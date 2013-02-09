@@ -72,6 +72,7 @@
         this.classes = {};
         this.classes.wrapper = namespace + '-wrapper';
         this.classes.enabled = namespace + '-enabled';
+        this.classes.sticky = namespace + '-sticky';
 
         this.components = {};
 
@@ -166,11 +167,13 @@
 
             var extra = elementTop - api.options.topSpace - scrollTop;
             if (extra < 0) {
+                api.$wrapper.addClass(api.classes.sticky);
                 api.$element.css({
                     position: 'fixed',
                     top: api.options.topSpace
                 });
             } else {
+                api.$wrapper.removeClass(api.classes.sticky);
                 api.$element.css({
                     position: '',
                     top: ''
@@ -181,6 +184,7 @@
             api.$wrapper.css('height', api.$element.outerHeight());
         },
         normalize: function(api) {
+            api.$wrapper.removeClass(api.classes.sticky);
             api.$element.css({
                 position: '',
                 top: ''
@@ -204,11 +208,13 @@
 
             var extra = scrollTop - (elementTop - windowHeight + elementHeight + api.options.bottomSpace);
             if (extra < 0) {
+                api.$wrapper.addClass(api.classes.sticky);
                 api.$element.css({
                     position: 'fixed',
                     bottom: api.options.bottomSpace
                 });
             } else {
+                api.$wrapper.removeClass(api.classes.sticky);
                 api.$element.css({
                     position: '',
                     bottom: ''
@@ -219,6 +225,7 @@
             api.$wrapper.css('height', api.$element.outerHeight());
         },
         normalize: function(api) {
+            api.$wrapper.removeClass(api.classes.sticky);
             api.$element.css({
                 position: '',
                 bottom: ''
@@ -250,6 +257,7 @@
             var extra = scrollTop - elementTop + api.options.topSpace;
 
             if (extra > 0) {
+                api.$wrapper.addClass(api.classes.sticky);
                 var constraint = api.containerHeight - elementHeight + api.containerTop - elementTop;
 
                 if (extra > constraint) {
@@ -262,6 +270,7 @@
                     });
                 }
             } else {
+                api.$wrapper.removeClass(api.classes.sticky);
                 api.$wrapper.css({
                     paddingTop: ''
                 });
@@ -272,6 +281,7 @@
             api.containerTop = api.$container.offset().top;
         },
         normalize: function(api) {
+            api.$wrapper.removeClass(api.classes.sticky);
             api.$wrapper.css({
                 paddingTop: ''
             });
