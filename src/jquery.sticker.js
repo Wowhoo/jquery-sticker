@@ -98,7 +98,15 @@
         init: function() {
             this.id = Global.generateId();
 
+
             var $wrapper = $('<div></div>').addClass(this.classes.wrapper);
+
+            var id = this.$element.attr('id');
+
+            if (typeof id !== 'undefined') {
+                $wrapper.attr('id', id + '-' + this.classes.wrapper);
+            }
+
             this.$element.wrapAll($wrapper);
 
             this.$wrapper = this.$element.parent();
