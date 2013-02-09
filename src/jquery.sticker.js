@@ -40,7 +40,6 @@
             });
         },
         start: function() {
-
             if (!this.started) {
                 $window.on('scroll', this.scroll);
                 $window.on('resize', this.resize);
@@ -131,6 +130,7 @@
         },
         enable: function() {
             this.enabled = true;
+            Global.types[this.type].scroll(this);
             this.$wrapper.addClass(this.classes.enabled);
         },
         disable: function() {
@@ -257,7 +257,7 @@
                 });
             }
         },
-        resize: function() {
+        resize: function(api) {
             api.containerHeight = api.$container.height();
             api.containerTop = api.$container.offset().top;
         },
@@ -270,10 +270,23 @@
 
     // Collection method.
     $.fn.sticker = function(options) {
-        return this.each(function() {
-            if (!$.data(this, 'sticker')) {
-                $.data(this, 'sticker', new Sticker(this, options));
-            }
-        });
+        if (typeof options === 'string') {
+            var method = options;
+            var method_arguments = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : undefined;
+
+            return this.each(function() {
+                var api = $.data(this, 'sticker');
+
+                if (typeof api[method] === 'function') {
+                    api[method].apply(api, method_arguments);
+                }
+            });
+        } else {
+            return this.each(function() {
+                if (!$.data(this, 'sticker')) {
+                    $.data(this, 'sticker', new Sticker(this, options));
+                }
+            });
+        }
     };
 }(window, document, jQuery));

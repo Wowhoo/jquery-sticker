@@ -1,4 +1,4 @@
-/*! Sticker - v0.3.0 - 2013-02-06
+/*! Sticker - v0.3.0 - 2013-02-09
 * https://github.com/amazingSurge/sticker
 * Copyright (c) 2013 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
@@ -106,6 +106,7 @@
 
             this.$wrapper = this.$element.parent();
 
+            //initial type
             Global.types[this.type].init(this);
 
             this.enable();
@@ -115,6 +116,7 @@
 
             Global.instances.push(this);
             Global.start();
+
         },
         destroy: function() {
             this.$element.unwrap();
@@ -131,6 +133,7 @@
         },
         enable: function() {
             this.enabled = true;
+            Global.types[this.type].scroll(this);
             this.$wrapper.addClass(this.classes.enabled);
         },
         disable: function() {
@@ -172,7 +175,7 @@
         resize: function(api) {
             api.$wrapper.css('height', api.$element.outerHeight());
         },
-        normalize: function(api){
+        normalize: function(api) {
             api.$element.css({
                 position: '',
                 top: ''
@@ -209,7 +212,7 @@
         resize: function(api) {
             api.$wrapper.css('height', api.$element.outerHeight());
         },
-        normalize: function(api){
+        normalize: function(api) {
             api.$element.css({
                 position: '',
                 bottom: ''
@@ -217,12 +220,76 @@
         }
     });
 
+    Sticker.registerType('sidebar', {
+        defaults: {
+            topSpace: 0, // how many pixels to pad the element from the top of the window
+            container: null
+        },
+        init: function(api) {
+            if (!api.options.container) {
+                api.$container = api.$wrapper.parent();
+            } else {
+                api.$container = $(api.options.container);
+            }
+
+            api.containerHeight = api.$container.height();
+            api.containerTop = api.$container.offset().top;
+        },
+        scroll: function(api) {
+            var scrollTop = $window.scrollTop(),
+                elementTop = api.$wrapper.offset().top,
+                elementHeight = api.$element.outerHeight();
+
+            var extra = scrollTop - elementTop + api.options.topSpace;
+
+            if (extra > 0) {
+                var constraint = api.containerHeight - elementHeight + api.containerTop - elementTop;
+
+                if (extra > constraint) {
+                    api.$wrapper.css({
+                        paddingTop: constraint
+                    });
+                } else {
+                    api.$wrapper.css({
+                        paddingTop: extra
+                    });
+                }
+            } else {
+                api.$wrapper.css({
+                    paddingTop: ''
+                });
+            }
+        },
+        resize: function(api) {
+            api.containerHeight = api.$container.height();
+            api.containerTop = api.$container.offset().top;
+        },
+        normalize: function(api) {
+            api.$wrapper.css({
+                paddingTop: ''
+            });
+        }
+    });
+
     // Collection method.
     $.fn.sticker = function(options) {
-        return this.each(function() {
-            if (!$.data(this, 'sticker')) {
-                $.data(this, 'sticker', new Sticker(this, options));
-            }
-        });
+        if (typeof options === 'string') {
+            var method = options;
+            var method_arguments = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : undefined;
+
+            return this.each(function() {
+                var api = $.data(this, 'sticker');
+
+                if (typeof api[method] === 'function') {
+                    api[method].apply(api, method_arguments);
+                }
+            });
+        } else {
+            return this.each(function() {
+                if (!$.data(this, 'sticker')) {
+                    $.data(this, 'sticker', new Sticker(this, options));
+                }
+            });
+        }
     };
 }(window, document, jQuery));

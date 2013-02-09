@@ -46,7 +46,7 @@ module.exports = function(grunt) {
       }
     },
     "jsbeautifier" : {
-      files : ["src/**/*.js"],
+      files : ["src/**/*.js","demo/js/main.js"],
       options : {
         "indent_size": 4,
         "indent_char": " ",
@@ -89,7 +89,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsbeautifier');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'jsbeautifier', 'concat', 'uglify']);
 
   grunt.registerTask('js', ['jsbeautifier']);
 
