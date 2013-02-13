@@ -2,6 +2,7 @@
     "use strict";
 
     var $window = $(window),
+        $document = $(document),
         windowHeight = $window.height();
 
     var Global = {
@@ -99,7 +100,6 @@
         init: function() {
             this.id = Global.generateId();
 
-
             var $wrapper = $('<div></div>').addClass(this.classes.wrapper);
 
             var id = this.$element.attr('id');
@@ -109,7 +109,6 @@
             }
 
             this.$element.wrapAll($wrapper);
-
             this.$wrapper = this.$element.parent();
 
             this.sticky = false;
@@ -153,9 +152,7 @@
         defaults: {
             topSpace: 0
         },
-        init: function(api) {
-            
-        },
+        init: function(api) {},
         scroll: function(api) {
             // in this case, the element should not have margin top and bottom value
             var scrollTop = $window.scrollTop(),
@@ -204,22 +201,20 @@
 
     Sticker.registerType('fill', {
         defaults: {
-            bottomSpace: 0,
+            check: true,
             callback: null // Callback: function(api) - Fires when fill
         },
         init: function(api) {},
         scroll: function(api) {
-            // in this case, the element should not have margin top and bottom value
             var scrollTop = $window.scrollTop(),
-                elementTop = api.$wrapper.offset().top,
-                elementHeight = api.$element.outerHeight();
-            if(scrollTop === 0 && elementTop + elementHeight + api.options.bottomSpace < windowHeight){
+                documentHeight = $('body').height();
+            if(scrollTop === 0 && documentHeight < windowHeight){
                 if(!api.sticky){
                     api.sticky = true;
                     api.$wrapper.addClass(api.classes.sticky);
                     api.$element.css({
                         position: 'fixed',
-                        bottom: api.options.bottomSpace
+                        bottom: 0
                     });
                 }
             } else {
@@ -235,16 +230,24 @@
 
             // fire custom callback
             if ($.isFunction(api.options.callback)) {
-                api.options.callback.call(api, scrollTop, elementTop, elementHeight);
+                api.options.callback.call(api, scrollTop, documentHeight);
             }
         },
         resize: function(api) {
             api.$wrapper.css('height', api.$element.outerHeight());
         },
         enable: function(api) {
+            if(api.options.check){
+                api.checkInterval = setInterval(function(){
+                    Global.types[api.type].scroll(api);
+                }, 500);
+            }
             api.$wrapper.css('height', api.$element.outerHeight());
         },
         disable: function(api) {
+            if(api.options.check){
+                clearInterval(api.checkInterval);
+            }
             api.$wrapper.removeClass(api.classes.sticky);
             api.$element.css({
                 position: '',

@@ -16,8 +16,9 @@ jQuery(document).ready(function() {
         type: 'sidebar',
         topSpace: 30
     });
-
-    //$('p').css('marginTop','200px');
+    setInterval(function(){
+        $('p').css('marginTop','200px');
+    },5000);
 });
 
 enquire.register("screen and (max-width:767px)", {
