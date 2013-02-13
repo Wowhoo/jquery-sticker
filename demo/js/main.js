@@ -8,7 +8,7 @@ jQuery(document).ready(function() {
     });
 
     $('footer').sticker({
-        type: 'bottom',
+        type: 'fill',
         bottomSpace: 0
     });
 
@@ -16,6 +16,8 @@ jQuery(document).ready(function() {
         type: 'sidebar',
         topSpace: 30
     });
+
+    //$('p').css('marginTop','200px');
 });
 
 enquire.register("screen and (max-width:767px)", {

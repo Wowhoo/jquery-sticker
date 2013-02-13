@@ -112,13 +112,12 @@
 
             this.$wrapper = this.$element.parent();
 
+            this.sticky = false;
+
             //initial type
             Global.types[this.type].init(this);
 
             this.enable();
-
-            // first fire
-            Global.types[this.type].scroll(this);
 
             Global.instances.push(this);
             Global.start();
@@ -139,12 +138,13 @@
         },
         enable: function() {
             this.enabled = true;
+            Global.types[this.type].enable(this);
             Global.types[this.type].scroll(this);
             this.$wrapper.addClass(this.classes.enabled);
         },
         disable: function() {
             this.enabled = false;
-            Global.types[this.type].normalize(this);
+            Global.types[this.type].disable(this);
             this.$wrapper.removeClass(this.classes.enabled);
         }
     };
@@ -154,7 +154,7 @@
             topSpace: 0
         },
         init: function(api) {
-            api.$wrapper.css('height', api.$element.outerHeight());
+            
         },
         scroll: function(api) {
             // in this case, the element should not have margin top and bottom value
@@ -167,23 +167,32 @@
 
             var extra = elementTop - api.options.topSpace - scrollTop;
             if (extra < 0) {
-                api.$wrapper.addClass(api.classes.sticky);
-                api.$element.css({
-                    position: 'fixed',
-                    top: api.options.topSpace
-                });
+                if(!api.sticky){
+                    api.sticky = true;
+                    api.$wrapper.addClass(api.classes.sticky);
+                    api.$element.css({
+                        position: 'fixed',
+                        top: api.options.topSpace
+                    });
+                }
             } else {
-                api.$wrapper.removeClass(api.classes.sticky);
-                api.$element.css({
-                    position: '',
-                    top: ''
-                });
+                if(api.sticky){
+                    api.sticky = false;
+                    api.$wrapper.removeClass(api.classes.sticky);
+                    api.$element.css({
+                        position: '',
+                        top: ''
+                    });
+                }
             }
         },
         resize: function(api) {
             api.$wrapper.css('height', api.$element.outerHeight());
         },
-        normalize: function(api) {
+        enable: function(api){
+            api.$wrapper.css('height', api.$element.outerHeight());
+        },
+        disable: function(api) {
             api.$wrapper.removeClass(api.classes.sticky);
             api.$element.css({
                 position: '',
@@ -193,13 +202,63 @@
         }
     });
 
+    Sticker.registerType('fill', {
+        defaults: {
+            bottomSpace: 0,
+            callback: null // Callback: function(api) - Fires when fill
+        },
+        init: function(api) {},
+        scroll: function(api) {
+            // in this case, the element should not have margin top and bottom value
+            var scrollTop = $window.scrollTop(),
+                elementTop = api.$wrapper.offset().top,
+                elementHeight = api.$element.outerHeight();
+            if(scrollTop === 0 && elementTop + elementHeight + api.options.bottomSpace < windowHeight){
+                if(!api.sticky){
+                    api.sticky = true;
+                    api.$wrapper.addClass(api.classes.sticky);
+                    api.$element.css({
+                        position: 'fixed',
+                        bottom: api.options.bottomSpace
+                    });
+                }
+            } else {
+                if(api.sticky){
+                    api.sticky = false;
+                    api.$wrapper.removeClass(api.classes.sticky);
+                    api.$element.css({
+                        position: '',
+                        bottom: ''
+                    });
+                }
+            }
+
+            // fire custom callback
+            if ($.isFunction(api.options.callback)) {
+                api.options.callback.call(api, scrollTop, elementTop, elementHeight);
+            }
+        },
+        resize: function(api) {
+            api.$wrapper.css('height', api.$element.outerHeight());
+        },
+        enable: function(api) {
+            api.$wrapper.css('height', api.$element.outerHeight());
+        },
+        disable: function(api) {
+            api.$wrapper.removeClass(api.classes.sticky);
+            api.$element.css({
+                position: '',
+                bottom: ''
+            });
+            api.$wrapper.css('height', '');
+        }
+    });
+
     Sticker.registerType('bottom', {
         defaults: {
             bottomSpace: 0
         },
-        init: function(api) {
-            api.$wrapper.css('height', api.$element.outerHeight());
-        },
+        init: function(api) {},
         scroll: function(api) {
             // in this case, the element should not have margin top and bottom value
             var scrollTop = $window.scrollTop(),
@@ -208,23 +267,32 @@
 
             var extra = scrollTop - (elementTop - windowHeight + elementHeight + api.options.bottomSpace);
             if (extra < 0) {
-                api.$wrapper.addClass(api.classes.sticky);
-                api.$element.css({
-                    position: 'fixed',
-                    bottom: api.options.bottomSpace
-                });
+                if(!api.sticky){
+                    api.sticky = true;
+                    api.$wrapper.addClass(api.classes.sticky);
+                    api.$element.css({
+                        position: 'fixed',
+                        bottom: api.options.bottomSpace
+                    });
+                }
             } else {
-                api.$wrapper.removeClass(api.classes.sticky);
-                api.$element.css({
-                    position: '',
-                    bottom: ''
-                });
+                if(api.sticky){
+                    api.sticky = false;
+                    api.$wrapper.removeClass(api.classes.sticky);
+                    api.$element.css({
+                        position: '',
+                        bottom: ''
+                    });
+                }
             }
         },
         resize: function(api) {
             api.$wrapper.css('height', api.$element.outerHeight());
         },
-        normalize: function(api) {
+        enable: function(api) {
+            api.$wrapper.css('height', api.$element.outerHeight());
+        },
+        disable: function(api) {
             api.$wrapper.removeClass(api.classes.sticky);
             api.$element.css({
                 position: '',
@@ -239,7 +307,7 @@
             topSpace: 0, // how many pixels to pad the element from the top of the window
             container: null
         },
-        init: function(api) {
+        init: function(api){
             if (!api.options.container) {
                 api.$container = api.$wrapper.parent();
             } else {
@@ -257,7 +325,10 @@
             var extra = scrollTop - elementTop + api.options.topSpace;
 
             if (extra > 0) {
-                api.$wrapper.addClass(api.classes.sticky);
+                if(!api.sticky){
+                    api.sticky = true;
+                    api.$wrapper.addClass(api.classes.sticky);
+                }
                 var constraint = api.containerHeight - elementHeight + api.containerTop - elementTop;
 
                 if (extra > constraint) {
@@ -270,17 +341,23 @@
                     });
                 }
             } else {
-                api.$wrapper.removeClass(api.classes.sticky);
-                api.$wrapper.css({
-                    paddingTop: ''
-                });
+                if(api.sticky){
+                    api.sticky = false;
+                    api.$wrapper.removeClass(api.classes.sticky);
+                    api.$wrapper.css({
+                        paddingTop: ''
+                    });
+                }
             }
         },
         resize: function(api) {
             api.containerHeight = api.$container.height();
             api.containerTop = api.$container.offset().top;
         },
-        normalize: function(api) {
+        enable: function(api) {
+            
+        },
+        disable: function(api) {
             api.$wrapper.removeClass(api.classes.sticky);
             api.$wrapper.css({
                 paddingTop: ''
