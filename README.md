@@ -15,7 +15,14 @@ In your web page:
 <script src="dist/jquery.sticker.min.js"></script>
 <script>
 jQuery(function($) {
-  $.sticker(); // "awesome"
+	$('#header').sticker({
+		type: 'top',
+		topSpace: 0
+	});
+	$('#footer').sticker({
+		type: 'bottom',
+		bottomSpace: 0
+	});
 });
 </script>
 ```
