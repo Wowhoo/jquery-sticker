@@ -181,6 +181,11 @@
         },
         set: function(option, value) {
             this.options[option] = value;
+        },
+        update: function() {
+            if (this.enabled) {
+                Global.types[this.type].scroll(this);
+            }
         }
     };
 

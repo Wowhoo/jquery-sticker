@@ -1,4 +1,4 @@
-/*! Sticker - v0.6.2 - 2013-03-13
+/*! Sticker - v0.6.3 - 2013-03-13
 * https://github.com/amazingSurge/sticker
 * Copyright (c) 2013 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
@@ -184,6 +184,11 @@
         },
         set: function(option, value) {
             this.options[option] = value;
+        },
+        update: function() {
+            if (this.enabled) {
+                Global.types[this.type].scroll(this);
+            }
         }
     };
 
