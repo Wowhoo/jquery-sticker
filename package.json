@@ -1,12 +1,26 @@
 {
-  "name": "jquery-plugin",
-  "version": "0.0.0-ignored",
-  "engines": {
-    "node": ">= 0.8.0"
+  "name": "sticker",
+  "title": "Sticker",
+  "description": "Sticker is jQuery plugin used to stick elements to the fixed position on your",
+  "version": "0.6.2",
+  "homepage": "https://github.com/amazingSurge/sticker",
+  "author": {
+    "name": "amazingSurge",
+    "email": "amazingSurge@yahoo.com",
+    "url": "amazingSurge.com"
   },
-  "scripts": {
-    "test": "grunt qunit"
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:amazingSurge/sticker.git"
   },
+  "bugs": "https://github.com/amazingSurge/sticker/issues",
+  "licenses": [
+    {
+      "type": "GPL",
+      "url": "https://github.com/amazingSurge/sticker/blob/master/LICENSE-GPL"
+    }
+  ],
+  "keywords": [],
   "devDependencies": {
     "grunt-contrib-jshint": "~0.1.1rc6",
     "grunt-contrib-concat": "~0.1.2rc6",

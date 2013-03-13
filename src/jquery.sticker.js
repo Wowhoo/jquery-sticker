@@ -2,7 +2,6 @@
     "use strict";
 
     var $window = $(window),
-        $document = $(document),
         windowHeight = $window.height();
 
     var Global = {
@@ -89,10 +88,14 @@
         type: 'top', // String: Select your sticky type, "top", "bottom", "fill" or "sidebar"
 
         // Callback API
-        scroll: null, // Callback: function(api) - Fires when scroll
-        resize: null, // Callback: function(api) - Fires when resize
-        enable: null, // Callback: function(api) - Fires when enable sticky
-        disable: null // Callback: function(api) - Fires when disable sticky
+        init: null, // Callback: function() - Fires when init
+        destroy: null, // Callback: function() - Fires when destroy
+        scroll: null, // Callback: function() - Fires when scroll
+        resize: null, // Callback: function() - Fires when resize
+        enable: null, // Callback: function() - Fires when enable sticky
+        disable: null, // Callback: function() - Fires when disable sticky
+        sticky: null, // Callback: function() - Fires when sticky
+        unsticky: null // Callback: function() - Fires when unsticky
     };
 
     Sticker.registerType = function(name, type) {
@@ -118,6 +121,9 @@
             //initial type
             Global.types[this.type].init(this);
 
+            if ($.isFunction(this.options.init)) {
+                this.options.init.call(this);
+            }
             this.enable();
 
             Global.instances.push(this);
@@ -135,6 +141,10 @@
 
             if (Global.instances.length === 0) {
                 Global.stop();
+            }
+
+            if ($.isFunction(this.options.destroy)) {
+                this.options.destroy.call(this);
             }
         },
         enable: function() {
@@ -158,6 +168,19 @@
             if ($.isFunction(this.options.disable)) {
                 this.options.disable.call(this);
             }
+        },
+        on: function(e, callback) {
+            if (typeof e === "string" && typeof callback === "function") {
+                this.options[e] = callback;
+            }
+        },
+        off: function(e) {
+            if (typeof e === "string") {
+                this.options[e] = null;
+            }
+        },
+        set: function(option, value) {
+            this.options[option] = value;
         }
     };
 
@@ -184,6 +207,10 @@
                         position: 'fixed',
                         top: api.options.topSpace
                     });
+                    // fire custom sticky callback
+                    if ($.isFunction(api.options.sticky)) {
+                        api.options.sticky.call(api);
+                    }
                 }
             } else {
                 if (api.sticky) {
@@ -193,6 +220,10 @@
                         position: '',
                         top: ''
                     });
+                    // fire custom unsticky callback
+                    if ($.isFunction(api.options.unsticky)) {
+                        api.options.unsticky.call(api);
+                    }
                 }
             }
         },
@@ -228,6 +259,10 @@
                         position: 'fixed',
                         bottom: 0
                     });
+                    // fire custom sticky callback
+                    if ($.isFunction(api.options.sticky)) {
+                        api.options.sticky.call(api);
+                    }
                 }
             } else {
                 if (api.sticky) {
@@ -237,6 +272,10 @@
                         position: '',
                         bottom: ''
                     });
+                    // fire custom unsticky callback
+                    if ($.isFunction(api.options.unsticky)) {
+                        api.options.unsticky.call(api);
+                    }
                 }
             }
 
@@ -292,6 +331,10 @@
                         position: 'fixed',
                         bottom: api.options.bottomSpace
                     });
+                    // fire custom sticky callback
+                    if ($.isFunction(api.options.sticky)) {
+                        api.options.sticky.call(api);
+                    }
                 }
             } else {
                 if (api.sticky) {
@@ -301,6 +344,10 @@
                         position: '',
                         bottom: ''
                     });
+                    // fire custom unsticky callback
+                    if ($.isFunction(api.options.unsticky)) {
+                        api.options.unsticky.call(api);
+                    }
                 }
             }
         },
@@ -357,6 +404,10 @@
                         paddingTop: extra
                     });
                 }
+                // fire custom sticky callback
+                if ($.isFunction(api.options.sticky)) {
+                    api.options.sticky.call(api);
+                }
             } else {
                 if (api.sticky) {
                     api.sticky = false;
@@ -364,6 +415,10 @@
                     api.$wrapper.css({
                         paddingTop: ''
                     });
+                    // fire custom unsticky callback
+                    if ($.isFunction(api.options.unsticky)) {
+                        api.options.unsticky.call(api);
+                    }
                 }
             }
         },
@@ -390,7 +445,7 @@
             return this.each(function() {
                 var api = $.data(this, 'sticker');
 
-                if (typeof api[method] === 'function') {
+                if (api && typeof api[method] === 'function') {
                     api[method].apply(api, method_arguments);
                 }
             });
