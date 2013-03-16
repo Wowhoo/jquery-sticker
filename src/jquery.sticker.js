@@ -121,6 +121,7 @@
             //initial type
             Global.types[this.type].init(this);
 
+            // fire custom init callback
             if ($.isFunction(this.options.init)) {
                 this.options.init.call(this);
             }
@@ -250,12 +251,17 @@
     Sticker.registerType('fill', {
         defaults: {
             check: true,
-            callback: null // Callback: function(api) - Fires when fill
+            callback: null, // Callback: function(api) - Fires when fill,
+            adjustHeight: null // Callback: function(api, documentHeight, windowHeight)
         },
         init: function(api) {},
         scroll: function(api) {
             var scrollTop = $window.scrollTop(),
                 documentHeight = $('body').height();
+
+            if ($.isFunction(api.options.adjustHeight)) {
+                documentHeight = api.options.adjustHeight.call(api, documentHeight, windowHeight);
+            }
             if (scrollTop === 0 && documentHeight <= windowHeight) {
                 if (!api.sticky) {
                     api.sticky = true;
