@@ -91,6 +91,6 @@ module.exports = function(grunt) {
   // Default task.
   grunt.registerTask('default', ['jshint', 'jsbeautifier', 'concat', 'uglify']);
 
-  grunt.registerTask('js', ['jsbeautifier']);
+  grunt.registerTask('js', ['jsbeautifier','concat', 'uglify']);
 
 };

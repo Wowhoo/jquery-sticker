@@ -198,20 +198,20 @@
         scroll: function(api) {
             // in this case, the element should not have margin top and bottom value
             var scrollTop = $window.scrollTop(),
-                elementTop = api.$wrapper.offset().top;
-
-            if (api.options.topSpace > elementTop) {
-                api.options.topSpace = elementTop;
+                elementTop = api.$wrapper.offset().top,
+                topSpace = api.options.topSpace;
+            if (topSpace > elementTop && elementTop >= 0) {
+                topSpace = elementTop;
             }
 
-            var extra = elementTop - api.options.topSpace - scrollTop;
+            var extra = elementTop - topSpace - scrollTop;
             if (extra < 0) {
                 if (!api.sticky) {
                     api.sticky = true;
                     api.$wrapper.addClass(api.classes.sticky);
                     api.$element.css({
                         position: 'fixed',
-                        top: api.options.topSpace
+                        top: topSpace
                     });
                     // fire custom sticky callback
                     if ($.isFunction(api.options.sticky)) {

@@ -1,5 +1,5 @@
-/*! Sticker - v0.6.4 - 2013-03-16
-* https://github.com/amazingSurge/sticker
+/*! Sticker - v0.6.5 - 2013-04-16
+* https://github.com/amazingSurge/jquery-sticker
 * Copyright (c) 2013 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
     "use strict";
@@ -201,20 +201,20 @@
         scroll: function(api) {
             // in this case, the element should not have margin top and bottom value
             var scrollTop = $window.scrollTop(),
-                elementTop = api.$wrapper.offset().top;
-
-            if (api.options.topSpace > elementTop) {
-                api.options.topSpace = elementTop;
+                elementTop = api.$wrapper.offset().top,
+                topSpace = api.options.topSpace;
+            if (topSpace > elementTop && elementTop >= 0) {
+                topSpace = elementTop;
             }
 
-            var extra = elementTop - api.options.topSpace - scrollTop;
+            var extra = elementTop - topSpace - scrollTop;
             if (extra < 0) {
                 if (!api.sticky) {
                     api.sticky = true;
                     api.$wrapper.addClass(api.classes.sticky);
                     api.$element.css({
                         position: 'fixed',
-                        top: api.options.topSpace
+                        top: topSpace
                     });
                     // fire custom sticky callback
                     if ($.isFunction(api.options.sticky)) {
