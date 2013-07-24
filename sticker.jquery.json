@@ -1,0 +1,25 @@
+{
+  "name": "sticker",
+  "title": "jQuery Sticker",
+  "description": "Sticker is jQuery plugin used to stick elements to the fixed position on your web page",
+  "keywords": [],
+  "version": "0.6.5",
+  "author": {
+    "name": "amazingSurge",
+    "email": "amazingSurge@yahoo.com",
+    "url": "amazingSurge.com"
+  },
+  "bugs": "https://github.com/amazingSurge/jquery-sticker/issues",
+  "licenses": [
+    {
+      "type": "GPL",
+      "url": "https://github.com/amazingSurge/jquery-sticker/blob/master/LICENSE-GPL"
+    }
+  ],
+  "bugs": "https://github.com/amazingSurge/jquery-sticker/issues",
+  "homepage": "https://github.com/amazingSurge/jquery-sticker",
+  "docs": "https://github.com/amazingSurge/jquery-sticker",
+  "dependencies": {
+    "jquery": ">= 1.8.3"
+  }
+}
