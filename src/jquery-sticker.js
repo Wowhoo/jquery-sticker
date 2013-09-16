@@ -234,10 +234,10 @@
 			}
 		},
 		resize: function(api) {
-			api.$wrapper.css('height', api.$element.outerHeight());
+			api.$wrapper.css('height', api.$element.outerHeight(true));
 		},
 		enable: function(api) {
-			api.$wrapper.css('height', api.$element.outerHeight());
+			api.$wrapper.css('height', api.$element.outerHeight(true));
 		},
 		disable: function(api) {
 			api.$element.css({

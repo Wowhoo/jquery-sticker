@@ -1,4 +1,4 @@
-/*! jQuery Sticker - v0.6.5 - 2013-07-24
+/*! jQuery Sticker - v0.6.5 - 2013-09-16
 * https://github.com/amazingSurge/jquery-sticker
 * Copyright (c) 2013 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
@@ -237,10 +237,10 @@
 			}
 		},
 		resize: function(api) {
-			api.$wrapper.css('height', api.$element.outerHeight());
+			api.$wrapper.css('height', api.$element.outerHeight(true));
 		},
 		enable: function(api) {
-			api.$wrapper.css('height', api.$element.outerHeight());
+			api.$wrapper.css('height', api.$element.outerHeight(true));
 		},
 		disable: function(api) {
 			api.$element.css({
